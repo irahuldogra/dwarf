@@ -30,4 +30,6 @@ func SetupAndListen() {
 
 	router.Get("/dwarf", getAllRedirects)
 
+	router.Listen(":8080")
+
 }
