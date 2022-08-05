@@ -1,8 +1,8 @@
 package main
 
 import (
-	"shortener/model"
-	"shortener/server"
+	"dwarf/model"
+	"dwarf/server"
 )
 
 func main() {
