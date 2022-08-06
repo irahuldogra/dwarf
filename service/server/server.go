@@ -137,11 +137,11 @@ func SetupAndListen() {
 
 	router.Get("/r/:redirect", redirect)
 
-	router.Get("/dwarf", getAllRedirects)
-	router.Get("/dwarf/:id", getDwarf)
-	router.Post("/dwarf", createDwarf)
-	router.Patch("/dwarf", updateDwarf)
-	router.Delete("/dwarf/:id", deleteDwarf)
+	router.Get("/dwarfs", getAllRedirects)
+	router.Get("/dwarfs/:id", getDwarf)
+	router.Post("/dwarfs", createDwarf)
+	router.Patch("/dwarfs", updateDwarf)
+	router.Delete("/dwarfs/:id", deleteDwarf)
 
 	router.Listen(":8080")
 
