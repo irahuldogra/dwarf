@@ -37,13 +37,17 @@
         class={data.random ? 'disabled' : ''}
       />
 
-      <label for="isRandom">Randomly Generated Dwarf</label>
-      <input
-        type="checkbox"
-        name="isRandom"
-        id="isRandom"
-        bind:checked={data.random}
-      />
+      <div class="isRandom">
+        <label for="isRandom"> Randomly Generated Dwarf </label>
+        <input
+          class="checkbox"
+          type="checkbox"
+          name="isRandom"
+          id="isRandom"
+          bind:checked={data.random}
+        />
+      </div>
+
       <div class="actions">
         <button on:click={closeModal}>Cancel</button>
         <button on:click={send(data)}>Send</button>
@@ -144,5 +148,73 @@
     button {
       padding: 0.25em 0.75em;
     }
+  }
+
+  label {
+    font-size: 16px;
+    letter-spacing: 1.2px;
+    margin-left: 12px;
+  }
+
+  input[type='text'] {
+    font-size: 0.9em;
+    font-weight: 600;
+    padding: 0.25em 0.8em;
+    margin-bottom: 10px;
+    line-height: 2em;
+    border: 3px solid black;
+    border-radius: 20px;
+  }
+
+  input[type='text']:disabled {
+    background-color: slategray;
+    color: lightgray;
+  }
+
+  .isRandom {
+    display: grid;
+    grid-template-columns: 15em auto;
+    gap: 1em;
+    align-items: center;
+  }
+
+  input[type='checkbox'].checkbox {
+    font-size: 15px;
+    -webkit-appearance: none;
+    -moz-appearance: none;
+    appearance: none;
+    width: 3.5em;
+    height: 1.56em;
+    background: lightgray;
+    border-radius: 3em;
+    position: relative;
+    cursor: pointer;
+    outline: none;
+    -webkit-transition: all 0.2s ease-in-out;
+    transition: all 0.2s ease-in-out;
+  }
+
+  input[type='checkbox'].checkbox:checked {
+    background: black;
+  }
+
+  input[type='checkbox'].checkbox:after {
+    position: absolute;
+    content: '';
+    width: 1.5em;
+    height: 1.5em;
+    border-radius: 50%;
+    background: #fff;
+    -webkit-box-shadow: 0 0 0.25em rgba(0, 0, 0, 0.3);
+    box-shadow: 0 0 0.25em rgba(0, 0, 0, 0.3);
+    -webkit-transform: scale(0.7);
+    transform: scale(0.7);
+    left: 0;
+    -webkit-transition: all 0.2s ease-in-out;
+    transition: all 0.2s ease-in-out;
+  }
+
+  input[type='checkbox'].checkbox:checked:after {
+    left: calc(100% - 1.5em);
   }
 </style>
