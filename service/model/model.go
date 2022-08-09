@@ -7,7 +7,9 @@ import (
 	"gorm.io/gorm"
 )
 
-var db *gorm.DB
+var (
+	db *gorm.DB
+)
 
 type Dwarf struct {
 	ID       uint64 `json:"id" gorm:"primaryKey"`
@@ -29,4 +31,5 @@ func Setup() {
 	if err != nil {
 		fmt.Println(err)
 	}
+
 }

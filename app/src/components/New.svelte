@@ -1,22 +1,16 @@
 <script lang="ts">
   import { openModal } from 'svelte-modals';
   import Modal from './Modal.svelte';
+  import Constant from '../constants';
+  import type { DwarfInterface } from '../types';
 
-  interface Dwarf {
-    id: number;
-    dwarf: string;
-    redirect: string;
-    random: boolean;
-    clicked: boolean;
-  }
-
-  async function updateDwarf(data: Dwarf) {
+  async function updateDwarf(data: DwarfInterface): Promise<void> {
     const json = {
       redirect: data.redirect,
       dwarf: data.dwarf,
       random: data.random,
     };
-    await fetch('http://localhost:8080/dwarfs', {
+    await fetch(`${Constant.SERVICE_URL}/dwarfs`, {
       method: 'POST',
       headers: { 'Content-Type': 'application/json' },
       body: JSON.stringify(json),
@@ -25,7 +19,7 @@
     });
   }
 
-  function handleOpen() {
+  function handleOpen(): void {
     openModal(Modal, {
       title: 'Create New Dwarf Link',
       send: updateDwarf,

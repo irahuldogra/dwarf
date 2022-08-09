@@ -2,18 +2,13 @@
   import Card from './Card.svelte';
   import Modal from './Modal.svelte';
   import { Modals, closeModal, openModal } from 'svelte-modals';
-  export let dwarf: Dwarf;
+  import Constant from '../constants';
+  import type { DwarfInterface } from '../types';
+  export let dwarf: DwarfInterface;
 
   let showCard = true;
-  interface Dwarf {
-    id: number;
-    dwarf: string;
-    redirect: string;
-    random: boolean;
-    clicked: boolean;
-  }
 
-  async function update(data: Dwarf) {
+  async function update(data: DwarfInterface): Promise<void> {
     const json = {
       redirect: data.redirect,
       dwarf: data.dwarf,
@@ -21,7 +16,7 @@
       id: dwarf.id,
     };
 
-    await fetch('http://localhost:8080/dwarfs', {
+    await fetch(`${Constant.SERVICE_URL}/dwarfs`, {
       method: 'PATCH',
       headers: {
         'Content-Type': 'application/json',
@@ -32,7 +27,7 @@
     });
   }
 
-  function handleOpen(dwarf: Dwarf) {
+  function handleOpen(dwarf: DwarfInterface): void {
     openModal(Modal, {
       title: 'Update Dwarf Link',
       send: update,
@@ -42,7 +37,7 @@
     });
   }
 
-  async function deleteDwarf() {
+  async function deleteDwarf(): Promise<void> {
     if (
       confirm(
         'Are your sure you want to delete this dwarf link (' +
@@ -50,7 +45,7 @@
           ')?'
       )
     ) {
-      await fetch(`http://localhost:8080/dwarfs/${dwarf.id}`, {
+      await fetch(`${Constant.SERVICE_URL}/dwarfs/${dwarf.id}`, {
         method: 'DELETE',
       }).then((response) => {
         showCard = false;
@@ -62,7 +57,9 @@
 
 {#if showCard}
   <Card>
-    <p>Dwarf : http://localhost:8080/r/{dwarf.dwarf}</p>
+    <a href="{Constant.SERVICE_URL}/r/{dwarf.dwarf}">
+      <p>Dwarf : /{dwarf.dwarf}</p>
+    </a>
     <p>Redirect : {dwarf.redirect}</p>
     <p>Clicked : {dwarf.clicked}</p>
     <button class="update" on:click={() => handleOpen(dwarf)}> Update</button>
@@ -88,6 +85,11 @@
     right: 0;
     left: 0;
     background: rgb(255, 255, 255);
+  }
+
+  a {
+    text-decoration: none;
+    color: black;
   }
 
   p {

@@ -8,6 +8,12 @@ import (
 
 	"github.com/gofiber/fiber/v2"
 	"github.com/gofiber/fiber/v2/middleware/cors"
+	"github.com/gofiber/fiber/v2/middleware/logger"
+	"github.com/gofiber/fiber/v2/middleware/recover"
+
+	"github.com/goccy/go-json"
+
+	"github.com/gofiber/swagger"
 )
 
 func redirect(ctx *fiber.Ctx) error {
@@ -128,21 +134,36 @@ func deleteDwarf(ctx *fiber.Ctx) error {
 
 func SetupAndListen() {
 
-	router := fiber.New()
+	app := fiber.New(fiber.Config{
+		JSONEncoder: json.Marshal,
+		JSONDecoder: json.Unmarshal,
+	})
 
-	router.Use(cors.New(cors.Config{
+	app.Use(recover.New())
+
+	app.Use(cors.New(cors.Config{
 		AllowOrigins: "*",
 		AllowHeaders: "Origin, Content-Type, Accept",
 	}))
+	app.Use(logger.New())
 
-	router.Get("/r/:redirect", redirect)
+	api := app.Group("/api")
 
-	router.Get("/dwarfs", getAllRedirects)
-	router.Get("/dwarfs/:id", getDwarf)
-	router.Post("/dwarfs", createDwarf)
-	router.Patch("/dwarfs", updateDwarf)
-	router.Delete("/dwarfs/:id", deleteDwarf)
+	v1 := api.Group("/v1", func(c *fiber.Ctx) error {
+		c.Set("Version", "v1")
+		return c.Next()
+	})
 
-	router.Listen(":8080")
+	v1.Get("/swagger/*", swagger.HandlerDefault)
+
+	v1.Get("/r/:redirect", redirect)
+
+	v1.Get("/dwarfs", getAllRedirects)
+	v1.Get("/dwarfs/:id", getDwarf)
+	v1.Post("/dwarfs", createDwarf)
+	v1.Patch("/dwarfs", updateDwarf)
+	v1.Delete("/dwarfs/:id", deleteDwarf)
+
+	app.Listen(":8080")
 
 }

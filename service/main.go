@@ -8,5 +8,4 @@ import (
 func main() {
 	model.Setup()
 	server.SetupAndListen()
-
 }
