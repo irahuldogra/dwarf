@@ -4,6 +4,7 @@
   import { Modals, closeModal, openModal } from 'svelte-modals';
   export let dwarf: Dwarf;
 
+  let showCard = true;
   interface Dwarf {
     id: number;
     dwarf: string;
@@ -19,6 +20,16 @@
       random: data.random,
       id: dwarf.id,
     };
+
+    await fetch('http://localhost:8080/dwarfs', {
+      method: 'PATCH',
+      headers: {
+        'Content-Type': 'application/json',
+      },
+      body: JSON.stringify(json),
+    }).then((response) => {
+      console.log(response);
+    });
   }
 
   function handleOpen(dwarf: Dwarf) {
@@ -30,19 +41,38 @@
       random: dwarf.random,
     });
   }
+
+  async function deleteDwarf() {
+    if (
+      confirm(
+        'Are your sure you want to delete this dwarf link (' +
+          dwarf.dwarf +
+          ')?'
+      )
+    ) {
+      await fetch(`http://localhost:8080/dwarfs/${dwarf.id}`, {
+        method: 'DELETE',
+      }).then((response) => {
+        showCard = false;
+        console.log(response);
+      });
+    }
+  }
 </script>
 
-<Card>
-  <p>Dwarf : http://localhost:3000/r/{dwarf.dwarf}</p>
-  <p>Redirect : {dwarf.redirect}</p>
-  <p>Clicked : {dwarf.clicked}</p>
-  <button class="update" on:click={() => handleOpen(dwarf)}> Update</button>
-  <button class="delete"> Delete</button>
-</Card>
+{#if showCard}
+  <Card>
+    <p>Dwarf : http://localhost:8080/r/{dwarf.dwarf}</p>
+    <p>Redirect : {dwarf.redirect}</p>
+    <p>Clicked : {dwarf.clicked}</p>
+    <button class="update" on:click={() => handleOpen(dwarf)}> Update</button>
+    <button class="delete" on:click={deleteDwarf}> Delete</button>
+  </Card>
 
-<Modals>
-  <div slot="backdrop" class="backdrop" on:click={closeModal} />
-</Modals>
+  <Modals>
+    <div slot="backdrop" class="backdrop" on:click={closeModal} />
+  </Modals>
+{/if}
 
 <style>
   .update {

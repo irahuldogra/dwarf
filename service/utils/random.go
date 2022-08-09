@@ -1,15 +1,34 @@
 package utils
 
-import "math/rand"
+import (
+	"math/rand"
+	"strings"
+	"time"
+)
 
-var runes = []rune("0123456789abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ")
+const letterBytes = "abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ"
+const (
+	letterIdxBits = 6
+	letterIdxMask = 1<<letterIdxBits - 1
+	letterIdxMax  = 63 / letterIdxBits
+)
+
+var src = rand.NewSource(time.Now().UnixNano())
 
 func RandomURL(size int) string {
-	str := make([]rune, size)
-
-	for i := range str {
-		str[i] = runes[rand.Intn(len(runes))]
+	sb := strings.Builder{}
+	sb.Grow(size)
+	for i, cache, remain := size-1, src.Int63(), letterIdxMax; i >= 0; {
+		if remain == 0 {
+			cache, remain = src.Int63(), letterIdxMax
+		}
+		if idx := int(cache & letterIdxMask); idx < len(letterBytes) {
+			sb.WriteByte(letterBytes[idx])
+			i--
+		}
+		cache >>= letterIdxBits
+		remain--
 	}
 
-	return string(str)
+	return sb.String()
 }

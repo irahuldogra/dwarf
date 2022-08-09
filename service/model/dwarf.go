@@ -24,10 +24,10 @@ func GetDwarf(id uint64) (Dwarf, error) {
 	return dwarf, nil
 }
 
-func CreateDwarf(dwarf Dwarf) error {
+func CreateDwarf(dwarf Dwarf) (Dwarf, error) {
 
 	tx := db.Create(&dwarf)
-	return tx.Error
+	return dwarf, tx.Error
 }
 
 func UpdateDwarf(dwarf Dwarf) error {
@@ -45,7 +45,7 @@ func DeleteDwarf(id uint64) error {
 func FindByDwarfUrl(url string) (Dwarf, error) {
 	var dwarf Dwarf
 
-	tx := db.Where("url = ?", url).First(&dwarf)
+	tx := db.Where("dwarf = ?", url).First(&dwarf)
 
 	return dwarf, tx.Error
 }

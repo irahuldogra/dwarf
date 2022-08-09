@@ -73,7 +73,7 @@ func createDwarf(ctx *fiber.Ctx) error {
 		dwarf.Dwarf = utils.RandomURL(8)
 	}
 
-	err = model.CreateDwarf(dwarf)
+	dwarf, err = model.CreateDwarf(dwarf)
 	if err != nil {
 		return ctx.Status(fiber.StatusInternalServerError).JSON(fiber.Map{
 			"message": "could not create dwarf in db" + err.Error(),

@@ -8,6 +8,16 @@ Content-Type: application/json
 }
 
 ###
+POST http://localhost:8080/dwarfs
+Content-Type: application/json
+
+{
+    "dwarf" : "rahuldogra",
+    "redirect": "https://www.rahuldogra.dev/",
+    "random": true
+}
+
+###
 GET http://localhost:8080/dwarfs
 
 

@@ -50,7 +50,12 @@
 
       <div class="actions">
         <button on:click={closeModal}>Cancel</button>
-        <button on:click={send(data)}>Send</button>
+        <button
+          on:click={() => {
+            send(data);
+            closeModal();
+          }}>Send</button
+        >
       </div>
     </div>
   </div>
@@ -163,6 +168,7 @@
     margin-bottom: 10px;
     line-height: 2em;
     border: 3px solid black;
+    border-left: 5px solid black;
     border-radius: 20px;
   }
 
