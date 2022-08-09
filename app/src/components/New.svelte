@@ -1,8 +1,16 @@
-<script>
+<script lang="ts">
   import { openModal } from 'svelte-modals';
   import Modal from './Modal.svelte';
 
-  async function updateDwarf(data) {
+  interface Dwarf {
+    id: number;
+    dwarf: string;
+    redirect: string;
+    random: boolean;
+    clicked: boolean;
+  }
+
+  async function updateDwarf(data: Dwarf) {
     const json = {
       redirect: data.redirect,
       dwarf: data.dwarf,
@@ -32,13 +40,13 @@
 
 <style>
   button {
-    background-color: darkgray;
+    background-color: white;
     font-family: 'Open Sans', sans-serif;
     font-size: 16px;
     letter-spacing: 2px;
     text-decoration: none;
     text-transform: uppercase;
-    color: whitesmoke;
+    color: black;
     cursor: pointer;
     border: 3px solid;
     padding: 0.25em 0.5em;
@@ -47,9 +55,9 @@
     touch-action: manipulation;
     user-select: none;
     -webkit-user-select: none;
-    -ms-transform: skewX(-5deg);
-    -webkit-transform: skewX(-5deg);
-    transform: skewX(-5deg);
+    -ms-transform: skewX(-3deg);
+    -webkit-transform: skewX(-3deg);
+    transform: skewX(-3deg);
   }
 
   button:active {
