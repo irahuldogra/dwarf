@@ -4,6 +4,7 @@ import (
 	"dwarf/model"
 	"dwarf/utils"
 	"fmt"
+	"os"
 	"strconv"
 
 	"github.com/gofiber/fiber/v2"
@@ -132,6 +133,18 @@ func deleteDwarf(ctx *fiber.Ctx) error {
 	})
 }
 
+func setupMiddleware(app *fiber.App) {
+	app.Use(recover.New())
+	app.Use(cors.New(cors.Config{
+		AllowOrigins: "*",
+		AllowHeaders: "Origin, Content-Type, Accept",
+	}))
+
+	if os.Getenv("ENABLE_LOGGER") != "" {
+		app.Use(logger.New())
+	}
+}
+
 func SetupAndListen() {
 
 	app := fiber.New(fiber.Config{
@@ -139,13 +152,7 @@ func SetupAndListen() {
 		JSONDecoder: json.Unmarshal,
 	})
 
-	app.Use(recover.New())
-
-	app.Use(cors.New(cors.Config{
-		AllowOrigins: "*",
-		AllowHeaders: "Origin, Content-Type, Accept",
-	}))
-	app.Use(logger.New())
+	setupMiddleware(app)
 
 	api := app.Group("/api")
 
@@ -164,6 +171,13 @@ func SetupAndListen() {
 	v1.Patch("/dwarfs", updateDwarf)
 	v1.Delete("/dwarfs/:id", deleteDwarf)
 
-	app.Listen(":8080")
+	app.Use(func(c *fiber.Ctx) error {
+		return c.SendStatus(404)
+	})
+
+	serverHost := os.Getenv("SERVER_HOST")
+	serverPort := os.Getenv("SERVER_PORT")
+
+	app.Listen(fmt.Sprintf("%s:%s", serverHost, serverPort))
 
 }
