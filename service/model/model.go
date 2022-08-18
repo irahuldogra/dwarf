@@ -1,15 +1,7 @@
 package model
 
 import (
-	"fmt"
-	"os"
-
-	"gorm.io/driver/postgres"
-	"gorm.io/gorm"
-)
-
-var (
-	db *gorm.DB
+	"dwarf/database"
 )
 
 type Dwarf struct {
@@ -20,23 +12,52 @@ type Dwarf struct {
 	Random   bool   `json:"random"`
 }
 
-func Setup() {
+func GetAllDwarves() ([]Dwarf, error) {
+	var dwarves []Dwarf
+	db := database.DB
+	tx := db.Find(&dwarves)
 
-	username := os.Getenv("POSTGRES_USER")
-	password := os.Getenv("POSTGRES_PASSWORD")
-	dbHost := os.Getenv("POSTGRES_HOST")
-	dbPort := os.Getenv("POSTGRES_PORT")
-
-	dsn := fmt.Sprintf("host=%s port=%s user=%s password=%s sslmode=disable", dbHost, dbPort, username, password)
-	var err error
-	db, err = gorm.Open(postgres.Open(dsn), &gorm.Config{})
-	if err != nil {
-		panic(err)
+	if tx.Error != nil {
+		return []Dwarf{}, tx.Error
 	}
 
-	err = db.AutoMigrate(&Dwarf{})
-	if err != nil {
-		fmt.Println(err)
+	return dwarves, nil
+}
+
+func GetDwarf(id uint64) (Dwarf, error) {
+	var dwarf Dwarf
+	db := database.DB
+	tx := db.Where("id = ?", id).First(&dwarf)
+
+	if tx.Error != nil {
+		return Dwarf{}, tx.Error
 	}
 
+	return dwarf, nil
+}
+
+func CreateDwarf(dwarf Dwarf) (Dwarf, error) {
+	db := database.DB
+	tx := db.Create(&dwarf)
+	return dwarf, tx.Error
+}
+
+func UpdateDwarf(dwarf Dwarf) error {
+	db := database.DB
+	tx := db.Save(&dwarf)
+	return tx.Error
+}
+
+func DeleteDwarf(id uint64) error {
+	db := database.DB
+	tx := db.Unscoped().Delete(&Dwarf{}, id)
+	return tx.Error
+}
+
+func FindByDwarfUrl(url string) (Dwarf, error) {
+	var dwarf Dwarf
+	db := database.DB
+	tx := db.Where("dwarf = ?", url).First(&dwarf)
+
+	return dwarf, tx.Error
 }

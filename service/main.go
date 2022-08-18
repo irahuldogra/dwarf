@@ -1,6 +1,8 @@
 package main
 
 import (
+	"dwarf/api"
+	"dwarf/database"
 	"dwarf/model"
 	"dwarf/server"
 	"log"
@@ -14,6 +16,13 @@ func main() {
 		log.Fatal("Error loading .env file")
 	}
 
-	model.Setup()
-	server.SetupAndListen()
+	app := server.Create()
+
+	database.DB.AutoMigrate(&model.Dwarf{})
+
+	api.Setup(app)
+
+	if err := server.Listen(app); err != nil {
+		log.Panic(err)
+	}
 }
